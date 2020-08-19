@@ -1,40 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import ReactDOM from 'react-dom';
 
-let _state = []
-let index = 0
-
-function myUseState(initialValue){
-  const currentIndex = index
-  if(_state[currentIndex] === undefined){
-    _state[currentIndex] = initialValue
-  }
-  const setState = (newValue)=>{
-    _state[currentIndex] = newValue
-    render()
-  }
-  index++
-  return [_state[currentIndex], setState]
-}
-
-function render(){
-  index = 0
-  ReactDOM.render(<App/>,document.getElementById('root'));
-}
+const Context = createContext(null)
 
 function App(){
   const [n, setN] = useState(0)
-  const [m, setM] = useState(() => 0)
+  return (
+    <Context.Provider value={{n, setN}}>
+      <div>
+          <Baba />
+          <Uncle />
+      </div>
+    </Context.Provider>
+  )
+}
+
+function Baba(){
   return (
     <div>
-      n: {n}
-      <button onClick={() => setN(n+1)}>+1</button>
-      <br/>
-      m: {m}
-      <button onClick={() => setM(oldM => oldM+1)}>+1</button>
+      我是爸爸
+      <Child />
     </div>
   )
 }
+
+function Uncle(){
+  const {n, setN} = useContext(Context)
+  return (
+    <div>
+      我是叔叔
+      我拿到的 context 数据为 {n}
+    </div>
+  )
+}
+
+function Child(){
+  const {n, setN} = useContext(Context)
+  return (
+    <div>
+      我是儿子
+      我拿到的 context 数据为 {n}
+      <button onClick={() => setN(n+5)}>
+        点击改变 context 数据
+      </button>
+    </div>
+  )
+}
+
 
 ReactDOM.render(<App/>,document.getElementById('root'));
 
