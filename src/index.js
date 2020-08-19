@@ -21,19 +21,11 @@ const reducer = (state, action) => {
 
 function App(){
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [x, setX] = useState(0)
+  const count = useRef(0)
   useEffect(()=>{
-    console.log('只在第一次 render 后执行')
-  },[])
-  useEffect(()=>{
-    console.log('每次 render 后都执行，包括第一次 render')
-    return ()=>{
-      console.log('该组件要被销毁了')
-    }
+    count.current++;
+    console.log(`这是第 ${count.current} 次渲染页面`)
   })
-  useEffect(()=>{
-    console.log('只在 x 改变后执行，包括第一次 x 从 undefined 变成 initialValue')
-  },[x])
   return (
     <div>
       我是 App
@@ -41,9 +33,6 @@ function App(){
       <button onClick={()=>dispatch({type: 'addOne'})}>+1</button>
       <button onClick={()=>dispatch({type: 'addTwo'})}>+2</button>
       <button onClick={()=>dispatch({type: 'addX', x: 5})}>+5</button>
-      <br/>
-      x: {x}
-      <button onClick={()=>setX(x+1)}>x+1</button>
     </div>
   )
 }
