@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 let _state = []
@@ -23,15 +23,15 @@ function render(){
 }
 
 function App(){
-  const [n, setN] = myUseState(0)
-  const [m, setM] = myUseState(0)
+  const [n, setN] = useState(0)
+  const [m, setM] = useState(() => 0)
   return (
     <div>
       n: {n}
       <button onClick={() => setN(n+1)}>+1</button>
       <br/>
       m: {m}
-      <button onClick={() => setM(m+1)}>+1</button>
+      <button onClick={() => setM(oldM => oldM+1)}>+1</button>
     </div>
   )
 }
