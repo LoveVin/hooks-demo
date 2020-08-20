@@ -1,37 +1,50 @@
-import React, { useEffect , forwardRef, useRef, useImperativeHandle} from 'react';
+import React, { useEffect , useState} from 'react';
 import ReactDOM from 'react-dom';
 
-function App(){
-  const myRef = useRef(null)
-  useEffect(()=>{
-    console.log(myRef.current.real)
-    console.log(myRef.current.getParent())
-  }, [])
-  return (
-    <div>
-      我是父组件
-      <Child ref={myRef}/>
-    </div>
-  )
+const useList = () => {
+  const [list, setList] = useState(null);
+  useEffect(() => {
+    ajax("/list").then(list => {
+      setList(list);
+    });
+  }, []); // [] 确保只在第一次运行
+  return {
+    list: list,
+    setList: setList
+  };
+};
+export default useList;
+
+function ajax() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve([
+        { id: 1, name: "Frank" },
+        { id: 2, name: "Jack" },
+        { id: 3, name: "Alice" },
+        { id: 4, name: "Bob" }
+      ]);
+    }, 2000);
+  });
 }
 
-const Child = forwardRef((props, ref)=>{
-  const childRef = useRef(null)
-  useImperativeHandle(ref, ()=>{
-    return {
-      real: childRef.current,
-      getParent(){
-        return childRef.current.parentNode
-      }
-    }
-  })
+function App() {
+  const { list, setList } = useList();
   return (
-    <div>
-      我是子组件，我有一个子DOM
-      <button ref={childRef}>按钮</button>
+    <div className="App">
+      <h1>List</h1>
+      {list ? (
+        <ol>
+          {list.map(item => (
+            <li key={item.id}>{item.name}</li>
+          ))}
+        </ol>
+      ) : (
+        "加载中..."
+      )}
     </div>
-  )
-})
+  );
+}
 
 ReactDOM.render(<App/>,document.getElementById('root'));
 
