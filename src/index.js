@@ -10,7 +10,12 @@ const useList = () => {
   }, []); // [] 确保只在第一次运行
   return {
     list: list,
-    setList: setList
+    addItem: name => {
+      setList([...list, { id: Math.random(), name: name }]);
+    },
+    deleteIndex: index => {
+      setList(list.slice(0, index).concat(list.slice(index + 1)));
+    }
   };
 };
 export default useList;
@@ -19,24 +24,33 @@ function ajax() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve([
-        { id: 1, name: "Frank" },
-        { id: 2, name: "Jack" },
-        { id: 3, name: "Alice" },
-        { id: 4, name: "Bob" }
+        { id: "1", name: "Frank" },
+        { id: "2", name: "Jack" },
+        { id: "3", name: "Alice" },
+        { id: "4", name: "Bob" }
       ]);
     }, 2000);
   });
 }
 
 function App() {
-  const { list, setList } = useList();
+  const { list, deleteIndex } = useList();
   return (
     <div className="App">
       <h1>List</h1>
       {list ? (
         <ol>
-          {list.map(item => (
-            <li key={item.id}>{item.name}</li>
+          {list.map((item, index) => (
+            <li key={item.id}>
+              {item.name}
+              <button
+                onClick={() => {
+                  deleteIndex(index);
+                }}
+              >
+                x
+              </button>
+            </li>
           ))}
         </ol>
       ) : (
