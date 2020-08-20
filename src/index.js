@@ -1,42 +1,37 @@
-import React, { useReducer , useEffect , useState, useRef} from 'react';
+import React, { useEffect , useState, useMemo} from 'react';
 import ReactDOM from 'react-dom';
 
-const initialState = {
-  n: 0
-}
-
-const reducer = (state, action) => {
-  switch(action.type){
-    case 'addOne':
-      return { n: state.n + 1 }
-    case 'addTwo':
-      return { n: state.n + 2 }
-    case 'addX':
-      return { n: state.n + action.x }
-    default: {
-      throw new Error('unknown type')
-    }
-  }
-}
-
 function App(){
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const count = useRef(0)
-  useEffect(()=>{
-    count.current++;
-    console.log(`这是第 ${count.current} 次渲染页面`)
-  })
+  const [n, setN] = useState(0)
+  const [m, setM] = useState(0)
+  const onClickChild = useMemo(()=>{
+    return () => {
+      console.log(m)
+    }
+  },[m])  
   return (
     <div>
-      我是 App
-      {state.n}
-      <button onClick={()=>dispatch({type: 'addOne'})}>+1</button>
-      <button onClick={()=>dispatch({type: 'addTwo'})}>+2</button>
-      <button onClick={()=>dispatch({type: 'addX', x: 5})}>+5</button>
+      我是父组件
+      n: {n}
+      <button onClick={()=>setN(n+1)}>n+1</button>
+      <button onClick={()=>setM(m+1)}>m+1</button>
+      <Child value={m} onClick = {onClickChild}/>
     </div>
   )
 }
 
+const Child = React.memo((props)=>{
+  useEffect(()=>{
+    console.log('子组件 render 了')
+  })
+  return (
+    <div>
+      我是子组件，我收到来自父组件的值为：m {props.value}
+      <br/>
+      <button onClick={props.onClick}>click</button>
+    </div>
+  )
+})
 
 ReactDOM.render(<App/>,document.getElementById('root'));
 
